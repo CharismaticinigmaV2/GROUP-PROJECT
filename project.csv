@@ -49,3 +49,27 @@ vector<Team> readTeamsFromCSV(const string& filename) {
     return teams;
 }
 
+// Function to generate fixtures for the teams
+vector<Fixture> generateFixtures(const vector<Team>& teams) {
+    vector<Fixture> fixtures;
+    int totalWeekends = teams.size() - 1 * 2;
+    int matchesPerWeekend = teams.size() / 5;
+
+    // Generate home and away fixtures for each team pair
+    for (int leg = 1; leg <= 2; ++leg) {
+        for (int i = 0; i < teams.size() - 1; ++i) {
+            for (int j = i + 1; j < teams.size(); ++j) {
+                Fixture fixture;
+                fixture.homeTeam = (leg == 1) ? teams[i] : teams[j];
+                fixture.awayTeam = (leg == 1) ? teams[j] : teams[i];
+                fixture.leg = leg;
+                fixtures.push_back(fixture);
+            }
+        }
+    }
+
+    // Shuffle fixtures to randomize the order
+    random_device rd;
+    mt19937 g(rd());
+    shuffle(fixtures.begin(), fixtures.end(), g);
+
