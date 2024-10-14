@@ -123,8 +123,23 @@ void displayFixtures(const vector<Fixture>& fixtures) {
                   << "  Away team from: " << fixture.awayTeam.town << "\n\n";
     }
 }
-    // Shuffle fixtures to randomize the order
-    random_device rd;
-    mt19937 g(rd());
-    shuffle(fixtures.begin(), fixtures.end(), g);
+// Main function
+int main() {
+    // Read teams from CSV file
+    vector<Team> teams = readTeamsFromCSV("teams_csvFile.csv");
+    if (teams.empty()) {
+        cerr << "No teams were read from the CSV file. Exiting." << endl;
+        return 1;
+    }
 
+    // Generate fixtures
+    vector<Fixture> fixtures = generateFixtures(teams);
+
+    // Display fixtures on console
+    displayFixtures(fixtures);
+
+    // Save fixtures to CSV file
+    saveFixturesToCSV(fixtures, "fixtures.csv");
+    cout << "Fixtures have been saved to fixtures.csv" << endl;
+    return 0;
+}
