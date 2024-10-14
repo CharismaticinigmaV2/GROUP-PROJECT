@@ -67,7 +67,62 @@ vector<Fixture> generateFixtures(const vector<Team>& teams) {
             }
         }
     }
+  // Shuffle fixtures to randomize the order
+    random_device rd;
+    mt19937 g(rd());
+    shuffle(fixtures.begin(), fixtures.end(), g);
 
+    // Assign weekends to fixtures
+    int currentWeekend = 1;
+    int matchesThisWeekend = 0;
+
+    for (auto& fixture : fixtures) {
+        if (matchesThisWeekend == matchesPerWeekend) {
+            currentWeekend++;
+            matchesThisWeekend = 0;
+        }
+        fixture.weekend = currentWeekend;
+        matchesThisWeekend++;
+    }
+
+    return fixtures;
+}
+
+// Function to save fixtures to a CSV file
+void saveFixturesToCSV(const vector<Fixture>& fixtures, const string& filename) {
+    ofstream file(filename);
+    if (!file.is_open()) {
+        cerr << "Error opening file: " << filename << endl;
+        return;
+    }
+
+    // Write header
+    file << "Weekend,Home Team,Away Team,Home Town,Away Town,Stadium,Leg\n";
+
+    // Write fixture data
+    for (const auto& fixture : fixtures) {
+        file << fixture.weekend << ","
+             << fixture.homeTeam.name << ","
+             << fixture.awayTeam.name << ","
+             << fixture.homeTeam.town << ","
+             << fixture.awayTeam.town << ","
+             << fixture.homeTeam.stadium << ","
+             << fixture.leg << "\n";
+    }
+
+    file.close();
+}
+
+// Function to display fixtures on the console
+void displayFixtures(const vector<Fixture>& fixtures) {
+    for (const auto& fixture : fixtures) {
+        cout << "Weekend #" << fixture.weekend << ": "
+                  << fixture.homeTeam.name << " vs " << fixture.awayTeam.name
+                  << " (Leg " << fixture.leg << ")\n"
+                  << "  Stadium: " << fixture.homeTeam.stadium << " (" << fixture.homeTeam.town << ")\n"
+                  << "  Away team from: " << fixture.awayTeam.town << "\n\n";
+    }
+}
     // Shuffle fixtures to randomize the order
     random_device rd;
     mt19937 g(rd());
